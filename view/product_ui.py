@@ -1,75 +1,94 @@
-import os
+import tkinter as tk
+from tkinter import ttk, messagebox
 from controller.product_controller import ProductController
 
-class ProductoUI:
+class ProductUI:
     def __init__(self):
-        self.producto_controller = ProductController()
-    
-    def clear_console(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
-    
-    def menu(self):
-        while True:
-            self.clear_console()
-            print("--- Productos ---")
-            print("1. Agregar Producto")
-            print("2. Modificar Producto")
-            print("3. Eliminar Producto")
-            print("4. Mostrar Productos")
-            print("5. Buscar Producto")
-            print("6. Salir")
-            
-            option = int(input('\nOpción: '))
-            
-            if option == 1:
-                self.create_producto()
-            elif option == 2:
-                self.update_producto()
-            elif option == 3:
-                self.delete_producto()
-            elif option == 4:
-                self.read_productos()
-            elif option == 5:
-                self.find_producto()
-            elif option == 6:
-                break
-            else:
-                print('Opción no válida! Ingresa un número del 1 al 6.')
-    
-    def create_producto(self):
-        self.clear_console()
+        self.product_controller = ProductController()
+
+    def clear_fields(self):
+        self.id_var.set('')
+        self.nombre_categoria_var.set('')
+        self.nombre_producto_var.set('')
+        self.precio_var.set('')
+
+    def show_products(self):
+        self.clear_fields()
+        products = self.product_controller.read()
+        self.tree.delete(*self.tree.get_children())
+        for product in products:
+            self.tree.insert('', 'end', text=product[0], values=(product[1], product[2], product[3]))
+
+    def select_product(self, event):
+        selected_item = self.tree.selection()[0]
+        values = self.tree.item(selected_item, 'values')
+        self.id_var.set(self.tree.item(selected_item, 'text'))
+        self.nombre_categoria_var.set(values[0])
+        self.nombre_producto_var.set(values[1])
+        self.precio_var.set(values[2])
+
+    def create_product(self):
+        nombre_categoria = self.nombre_categoria_var.get()
+        nombre_producto = self.nombre_producto_var.get()
+        precio = float(self.precio_var.get())
+        self.product_controller.create(nombre_categoria, nombre_producto, precio)
+        self.show_products()
+        messagebox.showinfo("Éxito", "Producto creado correctamente.")
+
+    def update_product(self):
+        product_id = self.id_var.get()
+        nombre_categoria = self.nombre_categoria_var.get()
+        nombre_producto = self.nombre_producto_var.get()
+        precio = float(self.precio_var.get())
+        self.product_controller.update(product_id, nombre_categoria, nombre_producto, precio)
+        self.show_products()
+        messagebox.showinfo("Éxito", "Producto actualizado correctamente.")
+
+    def delete_product(self):
+        product_id = self.id_var.get()
+        self.product_controller.delete(product_id)
+        self.show_products()
+        messagebox.showinfo("Éxito", "Producto eliminado correctamente.")
+
+    def start_gui(self):
+        root = tk.Tk()
+        root.title('Gestión de Productos')
+
+        self.id_var = tk.StringVar()
+        self.nombre_categoria_var = tk.StringVar()
+        self.nombre_producto_var = tk.StringVar()
+        self.precio_var = tk.StringVar()
+
+        frame = ttk.Frame(root)
+        frame.grid(row=0, column=0, padx=10, pady=10)
+
+        ttk.Label(frame, text='ID:').grid(row=0, column=0, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.id_var, state='readonly').grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Label(frame, text='Nombre Categoría:').grid(row=1, column=0, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.nombre_categoria_var).grid(row=1, column=1, padx=5, pady=5)
+
+        ttk.Label(frame, text='Nombre Producto:').grid(row=2, column=0, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.nombre_producto_var).grid(row=2, column=1, padx=5, pady=5)
+
+        ttk.Label(frame, text='Precio:').grid(row=3, column=0, padx=5, pady=5)
+        ttk.Entry(frame, textvariable=self.precio_var).grid(row=3, column=1, padx=5, pady=5)
+
+        btn_frame = ttk.Frame(root)
+        btn_frame.grid(row=1, column=0, padx=10, pady=10)
+
+        ttk.Button(btn_frame, text='Agregar Producto', command=self.create_product).grid(row=0, column=0, padx=5, pady=5)
+        ttk.Button(btn_frame, text='Modificar Producto', command=self.update_product).grid(row=0, column=1, padx=5, pady=5)
+        ttk.Button(btn_frame, text='Eliminar Producto', command=self.delete_product).grid(row=0, column=2, padx=5, pady=5)
+
+        self.tree = ttk.Treeview(root, columns=('Nombre Categoría', 'Nombre Producto', 'Precio'))
+        self.tree.grid(row=2, column=0, padx=10, pady=10)
+        self.tree.heading('#0', text='ID')
+        self.tree.heading('Nombre Categoría', text='Nombre Categoría')
+        self.tree.heading('Nombre Producto', text='Nombre Producto')
+        self.tree.heading('Precio', text='Precio')
+        self.tree.bind('<ButtonRelease-1>', self.select_product)
+
+        self.show_products()
         
-        nombre_categoria = str(input('Nombre de la categoría: '))
-        nombre_producto = str(input('Nombre del producto: '))
-        precio = float(input('Precio del producto: '))
-        
-        self.producto_controller.create(nombre_categoria, nombre_producto, precio)
-        input('\nPresione ENTER para continuar...')
-        
-    def read_productos(self):
-        self.clear_console()
-        self.producto_controller.read()
-        input('\nPresione ENTER para continuar...')
-        
-    def update_producto(self):
-        self.clear_console()
-        
-        id_producto = int(input('ID del producto a modificar: '))
-        nombre_categoria = str(input('Nombre de la nueva categoría: '))
-        nombre_producto = str(input('Nuevo nombre del producto: '))
-        precio = float(input('Nuevo precio del producto: '))
-        
-        self.producto_controller.update(id_producto, nombre_categoria, nombre_producto, precio)
-        input('\nPresione ENTER para continuar...')
-    
-    def delete_producto(self):
-        self.clear_console()
-        id_producto = int(input('ID del producto a eliminar: '))
-        self.producto_controller.delete(id_producto)
-        input('\nPresione ENTER para continuar...')
-    
-    def find_producto(self):
-        self.clear_console()
-        nombre = str(input('Nombre del producto: '))
-        self.producto_controller.find(nombre)
-        input('\nPresione ENTER para continuar...')
+        root.mainloop()

@@ -1,9 +1,15 @@
-from tkinter import Tk, StringVar, ttk, Menu, Entry, Label, Button
+import tkinter as tk
+from tkinter import StringVar, ttk, Entry, Label
 from controller.customer_controller import CustomerController
 
 class CustomerUI:
-    def __init__(self):
+    def __init__(self, root, regresar_menu):
+        self.root = root
+        self.regresar_menu = regresar_menu
         self.customer_controller = CustomerController()
+
+    def regresar_menu(self):
+        self.root.menu()
 
     def clear_fields(self):
         self.id_var.set('')
@@ -61,43 +67,44 @@ class CustomerUI:
             print('No se encontraron clientes con ese nombre.')
 
     def start_gui(self):
-        root = Tk()
-        root.title('Gestión de Clientes')
-
         self.id_var = StringVar()
         self.first_name_var = StringVar()
         self.last_name_var = StringVar()
         self.address_var = StringVar()
         self.phone_number_var = StringVar()
 
-        frame = ttk.Frame(root)
-        frame.grid(row=0, column=0, padx=10, pady=10)
+        frame = ttk.Frame(self.root)
+        frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
 
-        Label(frame, text='ID:').grid(row=0, column=0, padx=5, pady=5)
-        Entry(frame, textvariable=self.id_var, state='readonly').grid(row=0, column=1, padx=5, pady=5)
+        # Botón de regreso al menú principal
+        boton_regresar = ttk.Button(frame, text="Menú Principal", command=self.regresar_menu)
+        boton_regresar.pack(side=tk.LEFT, padx=5, pady=5)
 
-        Label(frame, text='Nombre(s):').grid(row=1, column=0, padx=5, pady=5)
-        Entry(frame, textvariable=self.first_name_var).grid(row=1, column=1, padx=5, pady=5)
+        Label(frame, text='ID:').pack()  
+        Entry(frame, textvariable=self.id_var, state='readonly').pack()  
 
-        Label(frame, text='Apellido(s):').grid(row=2, column=0, padx=5, pady=5)
-        Entry(frame, textvariable=self.last_name_var).grid(row=2, column=1, padx=5, pady=5)
+        Label(frame, text='Nombre(s):').pack()  
+        Entry(frame, textvariable=self.first_name_var).pack()  
 
-        Label(frame, text='Dirección:').grid(row=3, column=0, padx=5, pady=5)
-        Entry(frame, textvariable=self.address_var).grid(row=3, column=1, padx=5, pady=5)
+        Label(frame, text='Apellido(s):').pack()  
+        Entry(frame, textvariable=self.last_name_var).pack()  
 
-        Label(frame, text='Número de Teléfono:').grid(row=4, column=0, padx=5, pady=5)
-        Entry(frame, textvariable=self.phone_number_var).grid(row=4, column=1, padx=5, pady=5)
+        Label(frame, text='Dirección:').pack()  
+        Entry(frame, textvariable=self.address_var).pack()  
 
-        btn_frame = ttk.Frame(root)
-        btn_frame.grid(row=1, column=0, padx=10, pady=10)
+        Label(frame, text='Número de Teléfono:').pack()  
+        Entry(frame, textvariable=self.phone_number_var).pack()  
 
-        ttk.Button(btn_frame, text='Agregar Cliente', command=self.create_customer).grid(row=0, column=0, padx=5, pady=5)
-        ttk.Button(btn_frame, text='Modificar Cliente', command=self.update_customer).grid(row=0, column=1, padx=5, pady=5)
-        ttk.Button(btn_frame, text='Eliminar Cliente', command=self.delete_customer).grid(row=0, column=2, padx=5, pady=5)
-        ttk.Button(btn_frame, text='Buscar Cliente', command=self.find_customer).grid(row=0, column=3, padx=5, pady=5)
+        btn_frame = ttk.Frame(self.root)
+        btn_frame.pack()  
 
-        self.tree = ttk.Treeview(root, columns=('Nombre(s)', 'Apellido(s)', 'Dirección', 'Número de Teléfono'))
-        self.tree.grid(row=2, column=0, padx=10, pady=10)
+        ttk.Button(btn_frame, text='Agregar Cliente', command=self.create_customer).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(btn_frame, text='Modificar Cliente', command=self.update_customer).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(btn_frame, text='Eliminar Cliente', command=self.delete_customer).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(btn_frame, text='Buscar Cliente', command=self.find_customer).pack(side=tk.LEFT, padx=5, pady=5)  
+
+        self.tree = ttk.Treeview(self.root, columns=('Nombre(s)', 'Apellido(s)', 'Dirección', 'Número de Teléfono'))
+        self.tree.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)  
         self.tree.heading('#0', text='ID')
         self.tree.heading('Nombre(s)', text='Nombre(s)')
         self.tree.heading('Apellido(s)', text='Apellido(s)')
@@ -105,4 +112,4 @@ class CustomerUI:
         self.tree.heading('Número de Teléfono', text='Número de Teléfono')
         self.tree.bind('<ButtonRelease-1>', self.select_customer)
 
-        root.mainloop()
+        return frame

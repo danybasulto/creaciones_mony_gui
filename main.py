@@ -1,8 +1,8 @@
-from view.customer_ui import CustomerUI
+from view.main_ui import App
 
 def main():
-    app = CustomerUI()
-    app.start_gui()
+    app = App()
+    app.mainloop()
 
 if __name__ == '__main__':
     main()
