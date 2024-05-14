@@ -21,13 +21,10 @@ class PurchaseInvoice:
         try:
             self.db.connect()
             cursor = self.db.get_cursor()
-            cursor.execute("SELECT * FROM Factura_Compra")
+            cursor.execute("SELECT folio_compra, proveedor, fecha FROM Factura_Compra")
             rows = cursor.fetchall()
             self.db.close_connection()
-            if len(rows) == 0:
-                return []
-            else:
-                return rows
+            return rows if rows else []
         except psycopg2.Error as ex:
             print('Error al mostrar las Facturas de Compra: ', ex)
             return []

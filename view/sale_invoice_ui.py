@@ -30,11 +30,15 @@ class SaleInvoiceUI:
             self.tree.insert('', 'end', text=invoice[0], values=(invoice[1], invoice[2]))
 
     def select_invoice(self, event):
-        selected_item = self.tree.selection()[0]
-        values = self.tree.item(selected_item, 'values')
-        self.invoice_id_var.set(self.tree.item(selected_item, 'text'))
-        self.client_id_var.set(values[0])
-        self.date_var.set(values[1])
+        selected_items = self.tree.selection()
+        if selected_items:
+            selected_item = selected_items[0]
+            values = self.tree.item(selected_item, 'values')
+            self.invoice_id_var.set(self.tree.item(selected_item, 'text'))
+            self.client_id_var.set(values[0])
+            self.date_var.set(values[1])
+        else:
+            self.clear_fields()
 
     def create_invoice(self):
         client_id = int(self.client_id_var.get())

@@ -45,8 +45,11 @@ class App(tk.Tk):
         btn_purchase = tk.Button(self, text="Factura Compra", command=self.create_purchase_inv_ui)
         btn_purchase.pack()
         
-        btn_purchase = tk.Button(self, text="Factura Venta", command=self.create_sale_inv_ui)
-        btn_purchase.pack()
+        btn_sale = tk.Button(self, text="Factura Venta", command=self.create_sale_inv_ui)
+        btn_sale.pack()
+        
+        btn_purchase_det = tk.Button(self, text="Detalle Factura Venta", command=self.create_purchase_inv_det_ui)
+        btn_purchase_det.pack()
 
     def cargar_ui(self, ui_instance):
         # Limpia los campos de la interfaz de clientes antes de cargar otra interfaz
@@ -80,3 +83,7 @@ class App(tk.Tk):
     def create_sale_inv_ui(self):
         sale_ui = SaleInvoiceUI(self)
         self.cargar_ui(sale_ui)
+        
+    def create_purchase_inv_det_ui(self):
+        purchase_ui = PurchaseInvoiceDetailUI(self)
+        self.cargar_ui(purchase_ui)
