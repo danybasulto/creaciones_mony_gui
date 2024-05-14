@@ -8,7 +8,7 @@ class PurchaseInvoiceController:
         self.purchase_invoice.create_invoice(supplier_id, date)
 
     def read_invoices(self):
-        self.purchase_invoice.read_invoices()
+        return self.purchase_invoice.read_invoices()
 
     def update_invoice(self, invoice_id, supplier_id, date):
         self.purchase_invoice.update_invoice(invoice_id, supplier_id, date)

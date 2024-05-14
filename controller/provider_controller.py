@@ -8,7 +8,7 @@ class ProviderController:
         self.provider.create(bn, cn, a, pn)
         
     def read(self):
-        self.provider.read()
+        return self.provider.read()
 
     def update(self, id, b_name, c_name, address, phone_number):
         self.provider.update(id, b_name, c_name, address, phone_number)

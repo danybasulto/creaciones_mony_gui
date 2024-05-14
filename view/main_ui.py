@@ -16,14 +16,8 @@ class App(tk.Tk):
         self.title("CREACIONES MONY")
         self.geometry("800x600")
         
-        self.prod_ui = ProductUI()
-        self.cat_ui = CategoryUI()
-        self.prov_ui = ProviderUI()
-        self.sale_inv_ui = SaleInvoiceUI()
-        self.sale_inv_d_ui = SaleInvoiceDetailUI()
-        self.pur_inv_ui = PurchaseInvoiceUI()
-        self.pur_inv_d_ui = PurchaseInvoiceDetailUI()
-        
+        self.current_ui = None  # Almacena la instancia de la UI actual
+
         self.menu()
 
     def menu(self):
@@ -37,29 +31,28 @@ class App(tk.Tk):
         label_titulo = tk.Label(self, text='CREACIONES MONY')
         label_titulo.config(font=('Roboto', 15))
         label_titulo.pack(pady=20)
+            
+        # Clientes
+        btn_clientes = tk.Button(self, text="Clientes", command=self.create_customer_ui)
+        btn_clientes.pack()
+        # Proveedores
+        btn_prov = tk.Button(self, text="Proveedores", command=self.create_providers_ui)
+        btn_prov.pack()
+        # categoria
+        btn_categorias = tk.Button(self, text="Categorias", command=self.create_categories_ui)
+        btn_categorias.pack()
         
-        # Opciones del menú
-        opciones = [
-            ("Productos", lambda: self.cargar_ui(self.prod_ui)),
-            ("Categorías", lambda: self.cargar_ui(self.cat_ui)),
-            ("Clientes", lambda: self.cargar_ui(CustomerUI(self, self.menu))),  
-            ("Proveedores", lambda: self.cargar_ui(self.prov_ui)),
-            ("Factura Venta", lambda: self.cargar_ui(self.sale_inv_ui)),
-            ("Detalle Factura Venta", lambda: self.cargar_ui(self.sale_inv_d_ui)),
-            ("Factura Compra", lambda: self.cargar_ui(self.pur_inv_ui)),
-            ("Detalle Factura Compra", lambda: self.cargar_ui(self.pur_inv_d_ui)),
-        ]
+        btn_purchase = tk.Button(self, text="Factura Compra", command=self.create_purchase_inv_ui)
+        btn_purchase.pack()
         
-        # Botones de opciones
-        for nombre, comando in opciones:
-            boton = tk.Button(self, text=nombre, command=comando)
-            boton.pack()
-        
-        # Botón de salir
-        boton_salir = tk.Button(self, text="Salir", command=self.salir)
-        boton_salir.pack(pady=20)
-    
+        btn_purchase = tk.Button(self, text="Factura Venta", command=self.create_sale_inv_ui)
+        btn_purchase.pack()
+
     def cargar_ui(self, ui_instance):
+        # Limpia los campos de la interfaz de clientes antes de cargar otra interfaz
+        if isinstance(self.current_ui, CustomerUI):
+            self.current_ui.clear_fields()
+        
         # Eliminar widgets actuales en la ventana principal
         for widget in self.winfo_children():
             widget.destroy()
@@ -68,6 +61,22 @@ class App(tk.Tk):
         frame = ui_instance.start_gui()
         frame.pack(expand=True, fill=tk.BOTH)
         
-    def salir(self):
-        print('Gracias por usar el programa :)')
-        self.destroy()
+    def create_customer_ui(self):
+        customer_ui = CustomerUI(self)
+        self.cargar_ui(customer_ui)
+    
+    def create_categories_ui(self):
+        cat_ui = CategoryUI(self)
+        self.cargar_ui(cat_ui)
+    
+    def create_providers_ui(self):
+        prov_ui = ProviderUI(self)
+        self.cargar_ui(prov_ui)
+    
+    def create_purchase_inv_ui(self):
+        purchase_ui = PurchaseInvoiceUI(self)
+        self.cargar_ui(purchase_ui)
+    
+    def create_sale_inv_ui(self):
+        sale_ui = SaleInvoiceUI(self)
+        self.cargar_ui(sale_ui)

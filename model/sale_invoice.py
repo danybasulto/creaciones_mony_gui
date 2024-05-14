@@ -21,18 +21,17 @@ class SaleInvoice:
         try:
             self.db.connect()
             cursor = self.db.get_cursor()
-            cursor.execute("SELECT * FROM Factura_Venta")
+            cursor.execute("SELECT folio_venta, cliente, fecha FROM Factura_Venta")
             rows = cursor.fetchall()
             self.db.close_connection()
 
             if len(rows) == 0:
-                print('No hay Facturas de Venta.')
+                return []
             else:
-                print('Facturas de Venta:')
-                for row in rows:
-                    print(row)
+                return rows
         except psycopg2.Error as ex:
             print('Error al mostrar las Facturas de Venta: ', ex)
+            return []
 
     def update_invoice(self, invoice_id, client_id, date):
         try:

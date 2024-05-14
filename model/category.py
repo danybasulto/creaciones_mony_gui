@@ -37,13 +37,12 @@ class Category:
             self.db.close_connection()
             
             if len(rows) == 0:
-                print('No hay categorias.')
+                return []
             else:
-                print('Categorias:')
-                for row in rows:
-                    print(row)
+                return rows
         except psycopg2.Error as ex:
             print('Error al mostrar categorias: ', ex)
+            return []
     
     def update(self, id, name):
         try:

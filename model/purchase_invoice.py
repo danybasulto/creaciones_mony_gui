@@ -25,13 +25,12 @@ class PurchaseInvoice:
             rows = cursor.fetchall()
             self.db.close_connection()
             if len(rows) == 0:
-                print('No hay Facturas de Compra.')
+                return []
             else:
-                print('Facturas de Compra:')
-                for row in rows:
-                    print(row)
+                return rows
         except psycopg2.Error as ex:
             print('Error al mostrar las Facturas de Compra: ', ex)
+            return []
 
     def update_invoice(self, invoice_id, supplier_id, date):
         try:

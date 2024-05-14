@@ -8,7 +8,7 @@ class CategoryController:
         self.category.create(name)
         
     def read(self):
-        self.category.read()
+        return self.category.read()
 
     def update(self, id, name):
         self.category.update(id, name)

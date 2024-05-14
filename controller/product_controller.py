@@ -15,7 +15,7 @@ class ProductController:
             print('La categoría especificada no existe.')
         
     def read(self):
-        self.producto.read()
+        return self.producto.read()
 
     def update(self, id_producto, nombre_categoria, nombre_producto, precio):
         id_categoria = self.get_categoria_id(nombre_categoria)

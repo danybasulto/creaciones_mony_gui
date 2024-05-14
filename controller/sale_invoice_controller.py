@@ -8,7 +8,7 @@ class SaleInvoiceController:
         self.sale_invoice.create_invoice(client_id, date)
 
     def read_invoices(self):
-        self.sale_invoice.read_invoices()
+        return self.sale_invoice.read_invoices()
 
     def update_invoice(self, invoice_id, client_id, date):
         self.sale_invoice.update_invoice(invoice_id, client_id, date)

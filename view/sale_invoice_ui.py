@@ -1,60 +1,97 @@
-import os
+# sale_invoice.py
+import tkinter as tk
+from tkinter import ttk, Entry, Label
 from controller.sale_invoice_controller import SaleInvoiceController
 
 class SaleInvoiceUI:
-    def __init__(self):
+    def __init__(self, root):
+        self.root = root
         self.sale_invoice_controller = SaleInvoiceController()
+        self.frame = None
+        
+        # Inicializar variables de cadena
+        self.client_id_var = tk.StringVar()
+        self.date_var = tk.StringVar()
+        self.invoice_id_var = tk.StringVar()
 
-    def clear_console(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
+    def go_back_to_menu(self):
+        self.hide()
+        self.root.menu()
 
-    def menu(self):
-        while True:
-            self.clear_console()
-            print("--- Facturas de Venta ---")
-            print("1. Crear Factura de Venta")
-            print("2. Mostrar Facturas de Venta")
-            print("3. Actualizar Factura de Venta")
-            print("4. Eliminar Factura de Venta")
-            print("5. Salir")
+    def clear_fields(self):
+        self.client_id_var.set('')
+        self.date_var.set('')
+        self.invoice_id_var.set('')
 
-            option = int(input('\nOpción: '))
+    def show_invoices(self):
+        self.clear_fields()
+        self.tree.delete(*self.tree.get_children())
+        for invoice in self.sale_invoice_controller.read_invoices():
+            self.tree.insert('', 'end', text=invoice[0], values=(invoice[1], invoice[2]))
 
-            if option == 1:
-                self.create_invoice()
-            elif option == 2:
-                self.read_invoices()
-            elif option == 3:
-                self.update_invoice()
-            elif option == 4:
-                self.delete_invoice()
-            elif option == 5:
-                break
-            else:
-                print('Opción no válida! Ingresa un número del 1 al 5.')
+    def select_invoice(self, event):
+        selected_item = self.tree.selection()[0]
+        values = self.tree.item(selected_item, 'values')
+        self.invoice_id_var.set(self.tree.item(selected_item, 'text'))
+        self.client_id_var.set(values[0])
+        self.date_var.set(values[1])
 
     def create_invoice(self):
-        self.clear_console()
-        client_id = int(input('ID del cliente: '))
-        date = input('Fecha (YYYY-MM-DD): ')
+        client_id = int(self.client_id_var.get())
+        date = self.date_var.get()
         self.sale_invoice_controller.create_invoice(client_id, date)
-        input('\nPresione ENTER para continuar...')
-
-    def read_invoices(self):
-        self.clear_console()
-        self.sale_invoice_controller.read_invoices()
-        input('\nPresione ENTER para continuar...')
+        self.show_invoices()
 
     def update_invoice(self):
-        self.clear_console()
-        invoice_id = int(input('ID de la Factura de Venta a actualizar: '))
-        client_id = int(input('Nuevo ID del cliente: '))
-        date = input('Nueva fecha (YYYY-MM-DD): ')
+        invoice_id = int(self.invoice_id_var.get())
+        client_id = int(self.client_id_var.get())
+        date = self.date_var.get()
         self.sale_invoice_controller.update_invoice(invoice_id, client_id, date)
-        input('\nPresione ENTER para continuar...')
+        self.show_invoices()
 
     def delete_invoice(self):
-        self.clear_console()
-        invoice_id = int(input('ID de la Factura de Venta a eliminar: '))
+        invoice_id = int(self.invoice_id_var.get())
         self.sale_invoice_controller.delete_invoice(invoice_id)
-        input('\nPresione ENTER para continuar...')
+        self.show_invoices()
+
+    def show(self, root):
+        self.root = root
+        self.frame.pack(expand=True, fill=tk.BOTH)
+
+    def hide(self):
+        self.frame.pack_forget()
+
+    def start_gui(self):
+        # Creación del marco principal
+        self.frame = ttk.Frame(self.root)
+        self.frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+
+        # Botón de regreso al menú principal
+        back_button = ttk.Button(self.frame, text="Menú Principal", command=self.go_back_to_menu)
+        back_button.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
+
+        Label(self.frame, text='ID del Cliente:').pack()  
+        Entry(self.frame, textvariable=self.client_id_var).pack()  
+
+        Label(self.frame, text='Fecha (YYYY-MM-DD):').pack()  
+        Entry(self.frame, textvariable=self.date_var).pack()  
+
+        button_frame = ttk.Frame(self.frame)  # Crear un marco para los botones
+        button_frame.pack()  
+
+        ttk.Button(button_frame, text='Crear Factura de Venta', command=self.create_invoice).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(button_frame, text='Mostrar Facturas de Venta', command=self.show_invoices).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(button_frame, text='Actualizar Factura de Venta', command=self.update_invoice).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(button_frame, text='Eliminar Factura de Venta', command=self.delete_invoice).pack(side=tk.LEFT, padx=5, pady=5)
+
+        # Crear la tabla dentro del marco principal
+        self.tree = ttk.Treeview(self.frame, columns=('ID Cliente', 'Fecha'))
+        self.tree.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)  
+        self.tree.heading('#0', text='ID Factura')
+        self.tree.heading('ID Cliente', text='ID Cliente')
+        self.tree.heading('Fecha', text='Fecha')
+        self.tree.bind('<ButtonRelease-1>', self.select_invoice)
+        
+        self.show_invoices()
+
+        return self.frame

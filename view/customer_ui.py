@@ -1,14 +1,22 @@
 import tkinter as tk
-from tkinter import StringVar, ttk, Entry, Label
+from tkinter import ttk, Entry, Label
 from controller.customer_controller import CustomerController
 
 class CustomerUI:
-    def __init__(self, root, regresar_menu):
+    def __init__(self, root):
         self.root = root
-        self.regresar_menu = regresar_menu
         self.customer_controller = CustomerController()
+        self.frame = None
+        
+        # Inicializar variables de cadena
+        self.id_var = tk.StringVar()
+        self.first_name_var = tk.StringVar()
+        self.last_name_var = tk.StringVar()
+        self.address_var = tk.StringVar()
+        self.phone_number_var = tk.StringVar()
 
     def regresar_menu(self):
+        self.hide()
         self.root.menu()
 
     def clear_fields(self):
@@ -20,9 +28,8 @@ class CustomerUI:
 
     def show_customers(self):
         self.clear_fields()
-        customers = self.customer_controller.read()
         self.tree.delete(*self.tree.get_children())
-        for customer in customers:
+        for customer in self.customer_controller.read():
             self.tree.insert('', 'end', text=customer[0], values=(customer[1], customer[2], customer[3], customer[4]))
 
     def select_customer(self, event):
@@ -66,44 +73,48 @@ class CustomerUI:
         else:
             print('No se encontraron clientes con ese nombre.')
 
-    def start_gui(self):
-        self.id_var = StringVar()
-        self.first_name_var = StringVar()
-        self.last_name_var = StringVar()
-        self.address_var = StringVar()
-        self.phone_number_var = StringVar()
+    def show(self, root):
+        self.root = root
+        self.frame.pack(expand=True, fill=tk.BOTH)
 
-        frame = ttk.Frame(self.root)
-        frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+    def hide(self):
+        self.frame.pack_forget()
+
+    def start_gui(self):
+        # Creación del marco principal
+        self.frame = ttk.Frame(self.root)
+        self.frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
 
         # Botón de regreso al menú principal
-        boton_regresar = ttk.Button(frame, text="Menú Principal", command=self.regresar_menu)
-        boton_regresar.pack(side=tk.LEFT, padx=5, pady=5)
+        boton_regresar = ttk.Button(self.frame, text="Menú Principal", command=self.regresar_menu)
+        boton_regresar.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
-        Label(frame, text='ID:').pack()  
-        Entry(frame, textvariable=self.id_var, state='readonly').pack()  
+        Label(self.frame, text='ID:').pack()  
+        Entry(self.frame, textvariable=self.id_var, state='readonly').pack()  
 
-        Label(frame, text='Nombre(s):').pack()  
-        Entry(frame, textvariable=self.first_name_var).pack()  
+        Label(self.frame, text='Nombre(s):').pack()  
+        Entry(self.frame, textvariable=self.first_name_var).pack()  
 
-        Label(frame, text='Apellido(s):').pack()  
-        Entry(frame, textvariable=self.last_name_var).pack()  
+        Label(self.frame, text='Apellido(s):').pack()  
+        Entry(self.frame, textvariable=self.last_name_var).pack()  
 
-        Label(frame, text='Dirección:').pack()  
-        Entry(frame, textvariable=self.address_var).pack()  
+        Label(self.frame, text='Dirección:').pack()  
+        Entry(self.frame, textvariable=self.address_var).pack()  
 
-        Label(frame, text='Número de Teléfono:').pack()  
-        Entry(frame, textvariable=self.phone_number_var).pack()  
+        Label(self.frame, text='Número de Teléfono:').pack()  
+        Entry(self.frame, textvariable=self.phone_number_var).pack()  
 
-        btn_frame = ttk.Frame(self.root)
+        btn_frame = ttk.Frame(self.frame)  # Crear un marco para los botones
         btn_frame.pack()  
 
         ttk.Button(btn_frame, text='Agregar Cliente', command=self.create_customer).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(btn_frame, text='Modificar Cliente', command=self.update_customer).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(btn_frame, text='Eliminar Cliente', command=self.delete_customer).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(btn_frame, text='Buscar Cliente', command=self.find_customer).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(btn_frame, text='Buscar Cliente', command=self.find_customer).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Button(btn_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.tree = ttk.Treeview(self.root, columns=('Nombre(s)', 'Apellido(s)', 'Dirección', 'Número de Teléfono'))
+        # Crear la tabla dentro del marco principal
+        self.tree = ttk.Treeview(self.frame, columns=('Nombre(s)', 'Apellido(s)', 'Dirección', 'Número de Teléfono'))
         self.tree.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)  
         self.tree.heading('#0', text='ID')
         self.tree.heading('Nombre(s)', text='Nombre(s)')
@@ -111,5 +122,7 @@ class CustomerUI:
         self.tree.heading('Dirección', text='Dirección')
         self.tree.heading('Número de Teléfono', text='Número de Teléfono')
         self.tree.bind('<ButtonRelease-1>', self.select_customer)
-
-        return frame
+        
+        self.show_customers()
+        
+        return self.frame
