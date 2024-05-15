@@ -77,8 +77,8 @@ class CategoryUI:
         back_button = ttk.Button(self.frame, text="Menú Principal", command=self.go_back_to_menu)
         back_button.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
-        Label(self.frame, text='ID:').pack()  
-        Entry(self.frame, textvariable=self.id_var, state='readonly').pack()  
+        #Label(self.frame, text='ID:').pack()  
+        #Entry(self.frame, textvariable=self.id_var, state='readonly').pack()  
 
         Label(self.frame, text='Nombre:').pack()  
         Entry(self.frame, textvariable=self.name_var).pack()  
@@ -89,7 +89,7 @@ class CategoryUI:
         ttk.Button(button_frame, text='Agregar Categoría', command=self.create_category).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(button_frame, text='Modificar Categoría', command=self.update_category).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(button_frame, text='Eliminar Categoría', command=self.delete_category).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(button_frame, text='Buscar Categoría', command=self.find_category).pack(side=tk.LEFT, padx=5, pady=5)
+        #ttk.Button(button_frame, text='Buscar Categoría', command=self.find_category).pack(side=tk.LEFT, padx=5, pady=5)
         ttk.Button(button_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Crear la tabla dentro del marco principal

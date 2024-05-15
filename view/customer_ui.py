@@ -89,8 +89,8 @@ class CustomerUI:
         boton_regresar = ttk.Button(self.frame, text="Menú Principal", command=self.regresar_menu)
         boton_regresar.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
-        Label(self.frame, text='ID:').pack()  
-        Entry(self.frame, textvariable=self.id_var, state='readonly').pack()  
+        #Label(self.frame, text='ID:').pack()  
+        #Entry(self.frame, textvariable=self.id_var, state='readonly').pack()
 
         Label(self.frame, text='Nombre(s):').pack()  
         Entry(self.frame, textvariable=self.first_name_var).pack()  
@@ -110,7 +110,7 @@ class CustomerUI:
         ttk.Button(btn_frame, text='Agregar Cliente', command=self.create_customer).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(btn_frame, text='Modificar Cliente', command=self.update_customer).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(btn_frame, text='Eliminar Cliente', command=self.delete_customer).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(btn_frame, text='Buscar Cliente', command=self.find_customer).pack(side=tk.LEFT, padx=5, pady=5)
+        #ttk.Button(btn_frame, text='Buscar Cliente', command=self.find_customer).pack(side=tk.LEFT, padx=5, pady=5)
         ttk.Button(btn_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Crear la tabla dentro del marco principal

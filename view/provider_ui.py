@@ -89,8 +89,8 @@ class ProviderUI:
         back_button = ttk.Button(self.frame, text="Menú Principal", command=self.go_back_to_menu)
         back_button.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
-        Label(self.frame, text='ID:').pack()  
-        Entry(self.frame, textvariable=self.id_var, state='readonly').pack()  
+        #Label(self.frame, text='ID:').pack()  
+        #Entry(self.frame, textvariable=self.id_var, state='readonly').pack()
 
         Label(self.frame, text='Nombre del negocio:').pack()  
         Entry(self.frame, textvariable=self.bussiness_name_var).pack()  
@@ -110,7 +110,7 @@ class ProviderUI:
         ttk.Button(button_frame, text='Agregar Proveedor', command=self.create_provider).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(button_frame, text='Modificar Proveedor', command=self.update_provider).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(button_frame, text='Eliminar Proveedor', command=self.delete_provider).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(button_frame, text='Buscar Proveedor', command=self.find_provider).pack(side=tk.LEFT, padx=5, pady=5)
+        #ttk.Button(button_frame, text='Buscar Proveedor', command=self.find_provider).pack(side=tk.LEFT, padx=5, pady=5)
         ttk.Button(button_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Crear la tabla dentro del marco principal

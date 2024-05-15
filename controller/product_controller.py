@@ -8,40 +8,44 @@ class ProductController:
         self.db = Database()
 
     def create(self, nombre_categoria, nombre_producto, precio):
-        id_categoria = self.get_categoria_id(nombre_categoria)
+        id_categoria = self.producto.get_categoria_id(nombre_categoria)
         if id_categoria is not None:
             self.producto.create(id_categoria, nombre_producto, precio)
         else:
             print('La categoría especificada no existe.')
-        
-    def read(self):
-        return self.producto.read()
 
     def update(self, id_producto, nombre_categoria, nombre_producto, precio):
-        id_categoria = self.get_categoria_id(nombre_categoria)
+        id_categoria = self.producto.get_categoria_id(nombre_categoria)
         if id_categoria is not None:
             self.producto.update(id_producto, id_categoria, nombre_producto, precio)
         else:
             print('La categoría especificada no existe.')
+
+    def read(self):
+        products = self.producto.read()
+        formatted_products = []
+        for product in products:
+            # Obtener el nombre de la categoría en lugar del ID
+            category_name = self.producto.get_category_name(product[2])
+            if category_name is not None:
+                formatted_products.append((product[0], product[1], category_name, product[3]))
+            else:
+                print('Error: No se pudo obtener el nombre de la categoría para el producto', product[0])
+        return formatted_products
+
+    '''def update(self, id_producto, nombre_categoria, nombre_producto, precio):
+        id_categoria = self.producto.get_categoria_id(nombre_categoria)
+        if id_categoria is not None:
+            self.producto.update(id_producto, id_categoria, nombre_producto, precio)
+        else:
+            print('La categoría especificada no existe.')'''
 
     def delete(self, id_producto):
         self.producto.delete(id_producto)
 
     def find(self, nombre):
         self.producto.find(nombre)
-
-    def get_categoria_id(self, nombre_categoria):
-        try:
-            self.db.connect()
-            cursor = self.db.get_cursor()
-            query = "SELECT id_categoria FROM Categoria WHERE nombre = %s"
-            cursor.execute(query, (nombre_categoria,))
-            result = cursor.fetchone()
-            self.db.close_connection()
-            if result:
-                return result[0]
-            else:
-                return None
-        except psycopg2.Error as ex:
-            print('Error al obtener el ID de la categoría: ', ex)
-            return None
+        
+    def get_categories(self):
+        return self.producto.get_categories()
+    
