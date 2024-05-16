@@ -87,10 +87,11 @@ class SaleInvoiceUI:
         button_frame = ttk.Frame(self.frame)  # Crear un marco para los botones
         button_frame.pack()  
 
-        ttk.Button(button_frame, text='Crear Factura de Venta', command=self.create_invoice).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(button_frame, text='Mostrar Facturas de Venta', command=self.show_invoices).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(button_frame, text='Actualizar Factura de Venta', command=self.update_invoice).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(button_frame, text='Eliminar Factura de Venta', command=self.delete_invoice).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Button(button_frame, text='Crear Venta', command=self.create_invoice).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(button_frame, text='Mostrar Ventas', command=self.show_invoices).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(button_frame, text='Actualizar Venta', command=self.update_invoice).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(button_frame, text='Eliminar Venta', command=self.delete_invoice).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Button(button_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Crear la tabla dentro del marco principal
         self.tree = ttk.Treeview(self.frame, columns=('Cliente', 'Fecha'))

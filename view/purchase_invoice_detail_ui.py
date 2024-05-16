@@ -80,5 +80,6 @@ class PurchaseInvoiceDetailUI:
         button_frame.pack()
 
         ttk.Button(button_frame, text='Generar Detalle de Compra', command=self.create_invoice_detail).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Button(button_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
         return self.frame
