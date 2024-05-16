@@ -23,6 +23,7 @@ class ProductUI:
         self.id_var.set('')
         self.nombre_producto_var.set('')
         self.precio_var.set('')
+        self.selected_category.set('')
 
     def show_products(self):
         self.clear_fields()
@@ -39,11 +40,13 @@ class ProductUI:
                 self.id_var.set(self.tree.item(selected_item, 'text'))
                 product_id = self.tree.item(selected_item, 'text')
                 self.nombre_producto_var.set(values[0])
-                category_id = self.product_controller.producto.get_categoria_id(values[1])
+                # Obtener el ID de la categoría en lugar del nombre
+                category_name = values[1]
+                category_id = self.product_controller.producto.get_categoria_id(category_name)
                 if category_id is not None:
                     self.selected_category.set(category_id)
                 else:
-                    print('Error: No se pudo obtener el nombre de la categoría.')
+                    print('Error: No se pudo obtener el ID de la categoría.')
                 self.precio_var.set(values[2])
 
     def create_product(self):
