@@ -9,7 +9,7 @@ class PurchaseInvoiceUI:
         self.frame = None
         
         # Inicializar variables de cadena
-        self.supplier_id_var = tk.StringVar()
+        self.selected_supplier = tk.StringVar()
         self.date_var = tk.StringVar()
         self.invoice_id_var = tk.StringVar()
 
@@ -18,7 +18,7 @@ class PurchaseInvoiceUI:
         self.root.menu()
 
     def clear_fields(self):
-        self.supplier_id_var.set('')
+        self.selected_supplier.set('')
         self.date_var.set('')
         self.invoice_id_var.set('')
 
@@ -26,7 +26,9 @@ class PurchaseInvoiceUI:
         self.clear_fields()
         self.tree.delete(*self.tree.get_children())
         for invoice in self.purchase_invoice_controller.read_invoices():
-            self.tree.insert('', 'end', text=invoice[0], values=(invoice[1], invoice[2]))
+            supplier_id = invoice[1]
+            supplier_name = self.purchase_invoice_controller.get_supplier_name(supplier_id)  # Corrección aquí
+            self.tree.insert('', 'end', text=invoice[0], values=(supplier_name, invoice[2]))
 
     def select_invoice(self, event):
         selected_items = self.tree.selection()
@@ -34,20 +36,20 @@ class PurchaseInvoiceUI:
             selected_item = selected_items[0]
             values = self.tree.item(selected_item, 'values')
             self.invoice_id_var.set(self.tree.item(selected_item, 'text'))
-            self.supplier_id_var.set(values[0])
+            self.selected_supplier.set(values[0])
             self.date_var.set(values[1])
         else:
             self.clear_fields()
 
     def create_invoice(self):
-        supplier_id = int(self.supplier_id_var.get())
+        supplier_id = int(self.selected_supplier.get().split(':')[0])
         date = self.date_var.get()
         self.purchase_invoice_controller.create_invoice(supplier_id, date)
         self.show_invoices()
 
     def update_invoice(self):
         invoice_id = int(self.invoice_id_var.get())
-        supplier_id = int(self.supplier_id_var.get())
+        supplier_id = int(self.selected_supplier.get().split(':')[0])
         date = self.date_var.get()
         self.purchase_invoice_controller.update_invoice(invoice_id, supplier_id, date)
         self.show_invoices()
@@ -73,8 +75,13 @@ class PurchaseInvoiceUI:
         back_button = ttk.Button(self.frame, text="Menú Principal", command=self.go_back_to_menu)
         back_button.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
-        Label(self.frame, text='ID del Proveedor:').pack()  
-        Entry(self.frame, textvariable=self.supplier_id_var).pack()  
+        # Combobox para seleccionar el proveedor
+        Label(self.frame, text='Proveedor:').pack()  
+        self.supplier_combobox = ttk.Combobox(self.frame, textvariable=self.selected_supplier, state='readonly')
+        self.supplier_combobox.pack()  
+
+        # Obtener proveedores y asignarlos al combobox
+        self.supplier_combobox['values'] = [f"{supplier[0]}: {supplier[1]} {supplier[2]}" for supplier in self.purchase_invoice_controller.get_suppliers()]
 
         Label(self.frame, text='Fecha (YYYY-MM-DD):').pack()  
         Entry(self.frame, textvariable=self.date_var).pack()  

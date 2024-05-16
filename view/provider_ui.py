@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Entry, Label
+from tkinter import ttk, Entry, Label, messagebox
 from controller.provider_controller import ProviderController
 
 class ProviderUI:
@@ -47,6 +47,7 @@ class ProviderUI:
         address = self.address_var.get()
         phone_number = self.phone_number_var.get()
         self.provider_controller.create(bussiness_name, contact_name, address, phone_number)
+        messagebox.showinfo("Información", "Proveedor creado exitosamente.")
         self.show_providers()
 
     def update_provider(self):
@@ -56,14 +57,16 @@ class ProviderUI:
         address = self.address_var.get()
         phone_number = self.phone_number_var.get()
         self.provider_controller.update(provider_id, bussiness_name, contact_name, address, phone_number)
+        messagebox.showinfo("Información", "Proveedor actualizado exitosamente.")
         self.show_providers()
 
     def delete_provider(self):
         provider_id = self.id_var.get()
         self.provider_controller.delete(provider_id)
+        messagebox.showinfo("Información", "Proveedor eliminado exitosamente.")
         self.show_providers()
 
-    def find_provider(self):
+    '''def find_provider(self):
         bussiness_name = self.bussiness_name_var.get()
         providers = self.provider_controller.find(bussiness_name)
         if providers:
@@ -71,7 +74,7 @@ class ProviderUI:
             for provider in providers:
                 self.tree.insert('', 'end', text=provider[0], values=(provider[1], provider[2], provider[3], provider[4]))
         else:
-            print('No se encontraron proveedores con ese nombre.')
+            print('No se encontraron proveedores con ese nombre.')'''
 
     def show(self, root):
         self.root = root

@@ -25,7 +25,6 @@ class ProductController:
         products = self.producto.read()
         formatted_products = []
         for product in products:
-            # Obtener el nombre de la categoría en lugar del ID
             category_name = self.producto.get_category_name(product[2])
             if category_name is not None:
                 formatted_products.append((product[0], product[1], category_name, product[3]))

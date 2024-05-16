@@ -251,7 +251,34 @@ class Database:
         for view in views:
             self.execute_query(view)
 
+    def crear_trigger_cliente(self):
+        try:
+            self.connect()
+            cursor = self.get_cursor()
+            cursor.execute("""
+                CREATE OR REPLACE FUNCTION eliminar_facturas_relacionadas()
+                RETURNS TRIGGER AS $$
+                BEGIN
+                    DELETE FROM Factura_Venta WHERE cliente = OLD.id_cliente;
+                    RETURN OLD;
+                END;
+                $$ LANGUAGE plpgsql;
+
+                CREATE TRIGGER eliminar_facturas_trigger
+                AFTER DELETE ON Cliente
+                FOR EACH ROW
+                EXECUTE FUNCTION eliminar_facturas_relacionadas();
+            """)
+            print("Trigger para eliminar facturas relacionadas creado exitosamente.")
+        except psycopg2.Error as ex:
+            print("Error al crear el trigger para eliminar facturas relacionadas:", ex)
+        finally:
+            if cursor:
+                cursor.close()
+                self.close_connection()
+
 #db = Database()
+#db.backup_db()
 #db.connect()
 #db.create_tables()
 #db.crear_trigger_venta()

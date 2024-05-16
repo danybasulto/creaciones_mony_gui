@@ -29,8 +29,9 @@ class CategoryUI:
     def create_category(self):
         name = self.name_var.get()
         self.category_controller.create(name)
-        messagebox.showinfo("Información", "Categoría creada exitosamente.")
+        self.read_categories()
         self.clear_fields()
+        messagebox.showinfo("Información", "Categoría creada exitosamente.")
 
     def read_categories(self):
         categories = self.category_controller.read()
@@ -44,22 +45,18 @@ class CategoryUI:
         id = self.id_var.get()
         name = self.name_var.get()
         self.category_controller.update(id, name)
-        messagebox.showinfo("Información", "Categoría actualizada exitosamente.")
+        item = self.tree.selection()[0]
+        self.tree.item(item, values=(name,))
         self.clear_fields()
+        messagebox.showinfo("Información", "Categoría actualizada exitosamente.")
 
     def delete_category(self):
         id = self.id_var.get()
         self.category_controller.delete(id)
-        messagebox.showinfo("Información", "Categoría eliminada exitosamente.")
+        selected_item = self.tree.selection()[0]
+        self.tree.delete(selected_item)
         self.clear_fields()
-
-    def find_category(self):
-        name = self.name_var.get()
-        categories = self.category_controller.find(name)
-        if categories:
-            messagebox.showinfo("Categoría encontrada", "\n".join(categories))
-        else:
-            messagebox.showinfo("Información", "No se encontraron categorías con ese nombre.")
+        messagebox.showinfo("Información", "Categoría eliminada exitosamente.")
 
     def show(self, root):
         self.root = root

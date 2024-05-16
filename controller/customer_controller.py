@@ -21,3 +21,10 @@ class CustomerController:
 
     def find(self, first_name):
         return self.customer.find(first_name)
+    
+    def get_customer_name(self, customer_id):
+        customers = self.customer.read()
+        for customer in customers:
+            if customer[0] == customer_id:  # Suponiendo que el ID del cliente está en la primera posición de la tupla
+                return f"{customer[1]} {customer[2]}"  # Suponiendo que el primer nombre está en la segunda posición y el apellido en la tercera posición de la tupla
+        return "Cliente Desconocido"

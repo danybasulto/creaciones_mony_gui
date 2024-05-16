@@ -11,6 +11,8 @@ from view.sale_invoice_detail_ui import SaleInvoiceDetailUI
 from view.purchase_invoice_ui import PurchaseInvoiceUI
 from view.purchase_invoice_detail_ui import PurchaseInvoiceDetailUI
 
+from controller.summary_controller import SummaryController
+
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -23,6 +25,7 @@ class App(tk.Tk):
         self.img = None
         
         self.current_ui = None  # Almacena la instancia de la UI actual
+        self.summ_controller = SummaryController()
 
         self.menu()
 
@@ -35,6 +38,20 @@ class App(tk.Tk):
         label_titulo = tk.Label(self, text='CREACIONES MONY', bg='#fcfcd7', fg='#f04158')
         label_titulo.config(font=('Roboto', 25, 'bold'))
         label_titulo.pack(pady=20)
+        
+        # etiqueta de balance
+        self.lbl_balance = tk.Label(self, text='Balance', bg='#fcfcd7')
+        self.lbl_balance.config(font=('Roboto', 15, 'bold'))
+        self.lbl_balance.place(x=500,y=550)
+        # etiqueta de ventas totales
+        #self.lbl_total_sales = tk.Label(self, text='Ventas totales', bg='#fcfcd7', fg='#67be9b')
+        #self.lbl_total_sales.config(font=('Roboto', 15, 'bold'))
+        #self.lbl_total_sales.place(x=200,y=550)
+        # etiqueta de compras totales
+        #self.lbl_total_purchases = tk.Label(self, text='Compras totales', bg='#fcfcd7', fg='#f04158')
+        #self.lbl_total_purchases.config(font=('Roboto', 15, 'bold'))
+        #self.lbl_total_purchases.place(x=750,y=550)
+        self.show_summary()
         
         # imagen
         self.img = Image.open('./images/logo-mony.png')
@@ -57,17 +74,17 @@ class App(tk.Tk):
         btn_prov = tk.Button(self, text="Proveedores", bg='#f1db42', command=self.create_providers_ui)
         btn_prov.place(x=650,y=450)
         
-        btn_purchase = tk.Button(self, text="Factura Compra", bg='#f04158', command=self.create_purchase_inv_ui)
+        btn_purchase = tk.Button(self, text="Facturas Compras", bg='#f04158', command=self.create_purchase_inv_ui)
         btn_purchase.place(x=220,y=250)
         
-        btn_purchase_det = tk.Button(self, text="Detalle Factura Compra", bg='#f04158', command=self.create_purchase_inv_det_ui)
-        btn_purchase_det.place(x=200,y=300)
+        btn_purchase_det = tk.Button(self, text="Compra", bg='#f04158', command=self.create_purchase_inv_det_ui)
+        btn_purchase_det.place(x=250,y=300)
         
-        btn_sale = tk.Button(self, text="Factura Venta", bg='#67be9b', command=self.create_sale_inv_ui)
+        btn_sale = tk.Button(self, text="Facturas Ventas", bg='#67be9b', command=self.create_sale_inv_ui)
         btn_sale.place(x=770,y=250)
         
-        btn_sale_det = tk.Button(self, text="Detalle Factura Venta", bg='#67be9b', command=self.create_sale_inv_det_ui)
-        btn_sale_det.place(x=750,y=300)
+        btn_sale_det = tk.Button(self, text="Venta", bg='#67be9b', command=self.create_sale_inv_det_ui)
+        btn_sale_det.place(x=800,y=300)
 
     def cargar_ui(self, ui_instance):
         # Limpia los campos de la interfaz de clientes antes de cargar otra interfaz
@@ -81,7 +98,15 @@ class App(tk.Tk):
         # Empaquetar el frame devuelto por start_gui() en la ventana principal
         frame = ui_instance.start_gui()
         frame.pack(expand=True, fill=tk.BOTH)
-        
+    
+    def show_summary(self):
+        total_sales, total_purchases, balance = self.summ_controller.get_summary_data()
+
+        # Actualizar el texto de la etiqueta con el balance
+        self.lbl_balance.config(text=f"Balance: ${balance}")
+        #self.lbl_total_sales.config(text=f"Ventas totales: {total_sales}")
+        #self.lbl_total_purchases.config(text=f"Compras totales: {total_purchases}")
+    
     def create_product_ui(self):
         pro_ui = ProductUI(self)
         self.cargar_ui(pro_ui)

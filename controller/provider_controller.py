@@ -18,3 +18,10 @@ class ProviderController:
 
     def find(self, b_name):
         self.provider.find(b_name)
+        
+    def get_supplier_name(self, supplier_id):
+            supplier = self.provider.read()  # Cambio aquí, se obtienen todos los proveedores
+            for row in supplier:
+                if row[0] == supplier_id:  # Suponiendo que el ID del proveedor está en la primera posición de la tupla
+                    return row[1]  # Suponiendo que el nombre del proveedor está en la segunda posición de la tupla
+            return "Proveedor Desconocido"

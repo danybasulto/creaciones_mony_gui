@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Entry, Label
+from tkinter import ttk, Entry, Label, messagebox
 from controller.customer_controller import CustomerController
 
 class CustomerUI:
@@ -47,6 +47,7 @@ class CustomerUI:
         address = self.address_var.get()
         phone_number = self.phone_number_var.get()
         self.customer_controller.create(first_name, last_name, address, phone_number)
+        messagebox.showinfo("Información", "Cliente creado exitosamente.")
         self.show_customers()
 
     def update_customer(self):
@@ -56,14 +57,16 @@ class CustomerUI:
         address = self.address_var.get()
         phone_number = self.phone_number_var.get()
         self.customer_controller.update(customer_id, first_name, last_name, address, phone_number)
+        messagebox.showinfo("Información", "Cliente actualizado exitosamente.")
         self.show_customers()
 
     def delete_customer(self):
         customer_id = self.id_var.get()
         self.customer_controller.delete(customer_id)
+        messagebox.showinfo("Información", "Cliente eliminado exitosamente.")
         self.show_customers()
 
-    def find_customer(self):
+    '''def find_customer(self):
         first_name = self.first_name_var.get()
         customers = self.customer_controller.find(first_name)
         if customers:
@@ -71,7 +74,7 @@ class CustomerUI:
             for customer in customers:
                 self.tree.insert('', 'end', text=customer[0], values=(customer[1], customer[2], customer[3], customer[4]))
         else:
-            print('No se encontraron clientes con ese nombre.')
+            print('No se encontraron clientes con ese nombre.')'''
 
     def show(self, root):
         self.root = root

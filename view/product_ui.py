@@ -14,6 +14,11 @@ class ProductUI:
         self.precio_var = tk.StringVar()
         self.selected_category = tk.StringVar()  # Variable para almacenar la categoría seleccionada
 
+    def regresar_menu(self):
+        #self.hide()
+        self.frame.pack_forget()
+        self.root.menu()
+    
     def clear_fields(self):
         self.id_var.set('')
         self.nombre_producto_var.set('')
@@ -68,6 +73,10 @@ class ProductUI:
         # Creación del marco principal
         self.frame = ttk.Frame(self.root)
         self.frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
+        
+        # Botón de regreso al menú principal
+        boton_regresar = ttk.Button(self.frame, text="Menú Principal", command=self.regresar_menu)
+        boton_regresar.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
         ttk.Label(self.frame, text='Nombre:').pack()  
         ttk.Entry(self.frame, textvariable=self.nombre_producto_var).pack()  
@@ -86,7 +95,8 @@ class ProductUI:
 
         ttk.Button(btn_frame, text='Agregar', command=self.create_product).pack(side=tk.LEFT, padx=5, pady=5)  
         ttk.Button(btn_frame, text='Modificar', command=self.update_product).pack(side=tk.LEFT, padx=5, pady=5)  
-        ttk.Button(btn_frame, text='Eliminar', command=self.delete_product).pack(side=tk.LEFT, padx=5, pady=5)  
+        ttk.Button(btn_frame, text='Eliminar', command=self.delete_product).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Button(btn_frame, text='Limpiar campos', command=self.clear_fields).pack(side=tk.LEFT, padx=5, pady=5)
 
         # Crear la tabla dentro del marco principal
         self.tree = ttk.Treeview(self.frame, columns=('Producto', 'Categoría', 'Precio'))

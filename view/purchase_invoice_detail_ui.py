@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, Entry, Label
+from tkinter import ttk, Entry, Label, messagebox, Text, END
 from controller.purchase_invoice_detail_controller import PurchaseInvoiceDetailController
 
 class PurchaseInvoiceDetailUI:
@@ -10,46 +10,51 @@ class PurchaseInvoiceDetailUI:
 
         # Inicializar variables de cadena
         self.invoice_id_var = tk.StringVar()
-        self.product_id_var = tk.StringVar()
+        self.product_var = tk.StringVar()
         self.quantity_var = tk.StringVar()
-        self.unit_price_var = tk.StringVar()
-        self.total_expense_var = tk.StringVar()
-        self.detail_id_var = tk.StringVar()
 
     def go_back_to_menu(self):
-        self.hide()
+        self.frame.pack_forget()
         self.root.menu()
 
     def clear_fields(self):
         self.invoice_id_var.set('')
-        self.product_id_var.set('')
+        self.product_var.set('')
         self.quantity_var.set('')
-        self.unit_price_var.set('')
-        self.total_expense_var.set('')
-        self.detail_id_var.set('')
 
     def create_invoice_detail(self):
         invoice_id = int(self.invoice_id_var.get())
-        product_id = int(self.product_id_var.get())
+        product_id = int(self.product_var.get().split(':')[0])  # Obtener solo el ID del producto seleccionado
         quantity = int(self.quantity_var.get())
-        unit_price = float(self.unit_price_var.get())
-        total_expense = float(self.total_expense_var.get())
-        self.purchase_invoice_detail_controller.create_invoice_detail(invoice_id, product_id, quantity, unit_price, total_expense)
-        self.clear_fields()
+        unit_price, total_expense = self.purchase_invoice_detail_controller.create_invoice_detail(invoice_id, product_id, quantity)
+        if unit_price is not None and total_expense is not None:
+            messagebox.showinfo("Éxito", "Detalle de compra creado correctamente.")
+            self.generate_ticket(invoice_id, product_id, quantity, unit_price, total_expense)  # Generar el ticket
+        else:
+            messagebox.showerror("Error", "Error al crear el detalle de compra.")
 
-    def delete_invoice_detail(self):
-        detail_id = int(self.detail_id_var.get())
-        self.purchase_invoice_detail_controller.delete_invoice_detail(detail_id)
-        self.clear_fields()
+    def generate_ticket(self, invoice_id, product_id, quantity, unit_price, total_expense):
+        # Obtener detalles adicionales para el ticket
+        product_name, _ = self.purchase_invoice_detail_controller.get_product_details(product_id)
+        invoice_id = int(self.invoice_id_var.get())
 
-    def show(self, root):
-        self.root = root
-        self.frame.pack(expand=True, fill=tk.BOTH)
+        # Crear contenido del ticket
+        ticket_content = f"*** Ticket de Compra ***\n\n"
+        ticket_content += f"Factura de Compra: {invoice_id}\n"
+        ticket_content += f"Producto: {product_name}\n"
+        ticket_content += f"Cantidad: {quantity}\n"
+        ticket_content += f"Precio Unitario: {unit_price}\n"
+        ticket_content += f"Gasto Total: {total_expense}\n"
 
-    def hide(self):
-        self.frame.pack_forget()
+        # Mostrar el ticket en una ventana emergente
+        ticket_window = tk.Toplevel()
+        ticket_window.title("Ticket de Compra")
+        ticket_text = Text(ticket_window, wrap="word", height=20, width=60)
+        ticket_text.pack()
+        ticket_text.insert(END, ticket_content)
 
     def start_gui(self):
+        # Creación del marco principal y otros componentes...
         self.frame = ttk.Frame(self.root)
         self.frame.pack(expand=True, fill=tk.BOTH, padx=10, pady=10)
 
@@ -57,27 +62,23 @@ class PurchaseInvoiceDetailUI:
         back_button.pack(side=tk.TOP, anchor=tk.W, padx=5, pady=5)
 
         Label(self.frame, text='ID de la Factura de Compra:').pack()
-        Entry(self.frame, textvariable=self.invoice_id_var).pack()
+        invoice_combobox = ttk.Combobox(self.frame, textvariable=self.invoice_id_var, state='readonly')
+        invoice_combobox.pack()
+        invoice_combobox['values'] = self.purchase_invoice_detail_controller.get_purchase_invoices()
 
-        Label(self.frame, text='ID del Producto:').pack()
-        Entry(self.frame, textvariable=self.product_id_var).pack()
+        Label(self.frame, text='Producto:').pack()
+        product_combobox = ttk.Combobox(self.frame, textvariable=self.product_var, state='readonly')
+        product_combobox.pack()
+        products = self.purchase_invoice_detail_controller.get_products()
+        product_names = [f"{product[0]}: {product[1]}" for product in products]  # Concatenar ID y nombre del producto
+        product_combobox['values'] = product_names
 
         Label(self.frame, text='Cantidad:').pack()
         Entry(self.frame, textvariable=self.quantity_var).pack()
 
-        Label(self.frame, text='Precio Unitario:').pack()
-        Entry(self.frame, textvariable=self.unit_price_var).pack()
-
-        Label(self.frame, text='Total Gasto:').pack()
-        Entry(self.frame, textvariable=self.total_expense_var).pack()
-
-        Label(self.frame, text='ID del Detalle a Eliminar:').pack()
-        Entry(self.frame, textvariable=self.detail_id_var).pack()
-
         button_frame = ttk.Frame(self.frame)
         button_frame.pack()
 
-        ttk.Button(button_frame, text='Crear Detalle de Factura de Compra', command=self.create_invoice_detail).pack(side=tk.LEFT, padx=5, pady=5)
-        ttk.Button(button_frame, text='Eliminar Detalle de Factura de Compra', command=self.delete_invoice_detail).pack(side=tk.LEFT, padx=5, pady=5)
+        ttk.Button(button_frame, text='Generar Detalle de Compra', command=self.create_invoice_detail).pack(side=tk.LEFT, padx=5, pady=5)
 
         return self.frame
